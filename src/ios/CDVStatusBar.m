@@ -92,7 +92,11 @@ static const void *kStatusBarStyle = &kStatusBarStyle;
 
 -(void)cordovaViewWillAppear:(NSNotification*)notification
 {
-    [self resizeWebView];
+    //add a small delay ( 0.1 seconds ) or statusbar size will be wrong
+    __weak CDVStatusBar* weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [weakSelf resizeWebView];
+    });
 }
 
 -(void)statusBarDidChangeFrame:(NSNotification*)notification
@@ -189,6 +193,14 @@ static const void *kStatusBarStyle = &kStatusBarStyle;
             [self resizeWebView];
         }
     }
+}
+
+- (void) height:(CDVInvokedUrlCommand*)command
+{
+    double statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:statusBarHeight];
+    [result setKeepCallbackAsBool:YES];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 - (void) initializeStatusBarBackgroundView
