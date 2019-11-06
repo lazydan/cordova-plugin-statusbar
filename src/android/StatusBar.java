@@ -72,6 +72,9 @@ public class StatusBar extends CordovaPlugin {
 
                 // Read 'StatusBarStyle' from config.xml, default is 'lightcontent'.
                 setStatusBarStyle(preferences.getString("StatusBarStyle", "lightcontent"));
+                
+                // Read 'StatusBarOverlaysWebView' from config.xml, default is false.
+                setStatusBarTransparent(preferences.getBoolean("StatusBarOverlaysWebView", false));
             }
         });
     }
@@ -123,6 +126,8 @@ public class StatusBar extends CordovaPlugin {
                     // CB-11197 We still need to update LayoutParams to force status bar
                     // to be hidden when entering e.g. text fields
                     window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    
+                    setStatusBarTransparent(true);
 
                     _isVisible = true;
                 }
